@@ -1,0 +1,37 @@
+name: Scheduled tasks
+
+on:
+  schedule:
+    # Once every hour
+    - cron: '*/60 * * * *'
+jobs:
+  updatefork:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git
+      - name: Configure Git
+        run: |
+          git config --global user.email "action@github.com"
+          git config --global user.name "GitHub Action"
+      - name: Clone Repo
+        run: |
+          git clone https://github.com/realronakshah/homebrew-optic repo
+      - name: Checkout master branches
+        working-directory: ./repo
+        run: git checkout master
+      - name: Add Homebrew Remote
+        run: git remote add homebrew https://github.com/homebrew/homebrew-core
+        working-directory: ./repo
+      - name: Pull from homebrew and merge
+        run: |
+          git pull homebrew master --no-edit
+        working-directory: ./repo
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          directory: ./repo
+          branch: master
