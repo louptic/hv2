@@ -3,9 +3,9 @@ require "language/node"
 class Api < Formula
   desc "The Optic CLI"
   homepage "https://github.com/opticdev/optic"
-  url "https://registry.npmjs.org/@useoptic/cli/-/cli-8.4.1.tgz"
-  version "8.4.1"
-  sha256 "743fb6fe09cd07e80a5b72a79527e76ae8c0b1838bade0cf54da91df643e09ed"
+  url "https://registry.npmjs.org/@useoptic/cli/-/cli-8.4.2.tgz"
+  version "8.4.2"
+  sha256 "c078c21ffa9160942c558b846bf7ea92a3a455f13bed22da70ac6603ebcb776a"
 
   depends_on "node"
 
