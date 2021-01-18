@@ -3,8 +3,8 @@ require "language/node"
 class Api < Formula
   desc "The Optic CLI"
   homepage "https://github.com/opticdev/optic"
-  url "https://registry.npmjs.org/@useoptic/cli/-/cli-9.0.3.tgz"
-  sha256 "93aa72af40150e621e838b1d78e96e7ed6e990f316234d81f9b1d729c12910c0"
+  url "https://registry.npmjs.org/@useoptic/cli/-/cli-9.0.4.tgz"
+  sha256 "d773dab82eed28201cb4b2108b4417a82cd9ed4c394df1eba9da1bd40a02568d"
   license "MIT"
 
   livecheck do
