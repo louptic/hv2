@@ -29,6 +29,6 @@ class Api < Formula
   end
 
   test do
-    assert_match "@useoptic/cli", shell_output("#{bin}/api --version | awk '{print $1}' ")
+    assert_match "@useoptic/cli", shell_output("#{bin}/api --version | awk '{print $1}'")
   end
 end
