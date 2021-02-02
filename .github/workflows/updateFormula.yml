@@ -5,57 +5,29 @@
 on: 
   repository_dispatch: # https://github.com/peter-evans/repository-dispatch#readme
     types: [version-update]
+  workflow_dispatch:
 
 env: 
   packageName: "@useoptic/cli"
-  exportName: Api # must be capitalized since ruby classes are capitalized
+  exportName: api # must be capitalized since ruby classes are capitalized
   cleanedPkgName: useopticcli # just remove all special characters and make lowercase (no @s or /s)
 
 jobs:
-  # Updates the Formula for the specified NPM Package on Homebrew.
-  # Pushes Directly to your master branch (so you can PR to main homebrew) and also github-actions (so you can download it)
-  rewrite-formula-master:
-      runs-on: macos-10.15 # important, required for the noob package
-      steps:
-        - uses: actions/checkout@master
-          with:
-              ref: master
-        - uses: actions/setup-node@v1
-          with:
-            node-version: 12  
-        - run: npm install -g ${{ env.packageName }}
-        - run: brew install zmwangx/npm-noob/noob # https://github.com/zmwangx/homebrew-npm-noob, works for any NPM Package
-        - name: Create Formula # use noob and rename the package name into the export name (useful for organization clis)
-          run: mkdir -p Formula && touch Formula/${{ env.exportName }}.rb && perl -C -Mutf8 -pe "s/${{ env.cleanedPkgName }}/${{ env.exportName }}/i" <<< "$(noob ${{ env.packageName }})" > Formula/${{ env.exportName }}.rb
-        - run: git config --local user.email "action@github.com"
-        - run: git add Formula/${{ env.exportName }}.rb
-        - run: git config --local user.name "GitHub Package Updater"
-        - run: git commit -m "Updated Formula"
-        - name: Push changes
-          uses: ad-m/github-push-action@master
-          with:
-              github_token: ${{ secrets.GITHUB_TOKEN }}
-              branch: master
-  rewrite-formula-gh-actions:
-      runs-on: macos-10.15 # important, required for the noob package
-      steps:
-        - uses: actions/checkout@master
-          with:
-              ref: github-actions
-        - uses: actions/setup-node@v1
-          with:
-            node-version: 12  
-        - run: npm install -g ${{ env.packageName }}
-        - run: brew install zmwangx/npm-noob/noob # https://github.com/zmwangx/homebrew-npm-noob, works for any NPM Package
-        - name: Create Formula # use noob and rename the package name into the export name (useful for organization clis)
-          run: mkdir -p Formula && touch Formula/${{ env.exportName }}.rb && perl -C -Mutf8 -pe "s/${{ env.cleanedPkgName }}/${{ env.exportName }}/i" <<< "$(noob ${{ env.packageName }})" > Formula/${{ env.exportName }}.rb
-        - run: git config --local user.email "action@github.com"
-        - run: git add Formula/${{ env.exportName }}.rb
-        - run: git config --local user.name "GitHub Package Updater"
-        - run: git commit -m "Updated Formula"
-        - name: Push changes
-          uses: ad-m/github-push-action@master
-          with:
-              github_token: ${{ secrets.GITHUB_TOKEN }}
-              branch: github-actions
-  
+  # I don't believe anything here requires MacOS (go-task has other installation options) and this could be
+  # converted later to another runner if desired.
+  update-formula:
+    runs-on: macos-10.15
+    steps:
+      - uses: actions/checkout@master
+        with:
+          ref: main
+      - uses: actions/setup-node@v1
+        with:
+          node-version: 12
+      - run: brew install go-task/tap/go-task
+      - run: task build # Build includes a local commit to run test, and we can push in the next step
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            branch: main

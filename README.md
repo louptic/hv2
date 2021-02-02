@@ -1,13 +1,19 @@
 # Homebrew-Optic
 
-This repository contains the Formulae for Optic
+This repository contains the Formulae for Optic software.
 
-The `master` branch is a fork of the `homebrew/homebrew-core` branch, and is also where all formulae are held.
+## Software taps
 
-The `github-actions` branch contains the workflows that automated release, as well as all formulae.
+- **Api** - The Optic Local CLI
 
-## Why two branches?
+## Use
 
-In order to automate the workflow, we need GitHub actions files. However, these workflows will interfere in the PR if we try to merge our formulae into `homebrew-core`. But, in order for workflows to run, they need to be hosted on the default branch (which has been set to be `github-actions`. This interfers with homebrew, which pulls formula from the default branch. So when you run `brew install username/name/formula`, you'll be downloading the formula from the `github-actions` branch, but when we merge our changes into `homebrew-core`, we'll be merging from `master`)
+We use [task](https://taskfile.dev) to manage our Formula update process. `task` will run the default task, which 
+lists the tasks available (it runs `task --list`). Any tasks that start with a bracketed indicator of some kind (such as [DIAG] or [SRV]) are generally not expected to be run by individuals, but could be useful for troubleshooting.
 
+Primarily, the key task is `task build` which removes the previous formula, generates a new formula based on the current NPM stable package of the Optic Local CLI, audits the package, then commits it to the local repository and tests the package. This is intended to be used as a GitHub action, triggered on deployment of a new NPM package. The GitHub Action handles committing the changeset if it passes testing, or disposes of the faulty deploy and logs the results for review.
 
+## References
+
+- [Optic's Home](https://www.useoptic.com)
+- [Optic on GitHub](https://www.github.com/opticdev/optic)
